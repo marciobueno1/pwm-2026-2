@@ -1,6 +1,19 @@
 export default function Home() {
   return (
     <div>
+      <h1>Exemplo de Input com Datalist</h1>
+      <form action="https://www.w3schools.com/action_page.php" target="_blank" method="POST">
+        <input name="browserName" list="browsers" />
+        <datalist id="browsers">
+          <option value="Internet Explorer" />
+          <option value="Firefox" />
+          <option value="Chrome" />
+          <option value="Opera" />
+          <option value="Safari" />
+        </datalist>
+        <input type="submit" value="Enviar" />
+      </form>
+      <hr />
       <h1>Exemplos de Tabelas</h1>
       <table border="1">
         <caption>Resultado 1º Bimestre</caption>
