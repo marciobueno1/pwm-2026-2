@@ -1,6 +1,16 @@
 export default function Home() {
   return (
     <div>
+      <a href="http://www.google.com.br" target="_blank">
+        Ir para o Google
+      </a>
+      <h1 className="fundoAzul">Exemplo com label</h1>
+      <input type="checkbox" id="musica" name="musica" />
+      <label htmlFor="musica">Música</label>
+      <h1 className="fundoAzul fundoVermelho">Exemplo sem label</h1>
+      <input type="checkbox" id="musica2" name="musica2" />
+      Música
+      <hr />
       <h1>Exemplo de Input com Datalist</h1>
       <form action="https://www.w3schools.com/action_page.php" target="_blank" method="POST">
         <input name="browserName" list="browsers" />
@@ -40,9 +50,6 @@ export default function Home() {
       </table>
 
       <hr />
-      <a href="http://www.google.com.br" target="_blank">
-        Ir para o Google
-      </a>
 
       <h1>Lista de plantas silvestres na Amazônia</h1>
       <img
