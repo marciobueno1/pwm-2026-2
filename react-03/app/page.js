@@ -1,58 +1,55 @@
 "use client";
 
-import Image from "next/image";
+import { addTarefas, getTarefas } from "@/api";
 import styles from "./page.module.css";
 import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function Home() {
-  const [tarefas, setTarefas] = useState([]);
-  const [descricao, setDescricao] = useState("");
-  async function handleCarregarClick() {
-    const response = await fetch('https://parseapi.back4app.com/classes/Tarefa', {
-      headers: {
-        'X-Parse-Application-Id': 't4wZSEfltZ4QtFBZX5LY9hyyx4I45uAbjsrwzCAi',
-        'X-Parse-REST-API-Key': 'ZXx7xAlvFOyZith0HDnSpWdlHxnnATKsdgakYg4Q'
-      }
-    });
-    const data = await response.json();
-    setTarefas(data.results);
-  }
-  async function handleNovaTarefaClick() {
-    const response = await fetch('https://parseapi.back4app.com/classes/Tarefa', {
-      method: 'POST',
-      headers: {
-        'X-Parse-Application-Id': 't4wZSEfltZ4QtFBZX5LY9hyyx4I45uAbjsrwzCAi',
-        'X-Parse-REST-API-Key': 'ZXx7xAlvFOyZith0HDnSpWdlHxnnATKsdgakYg4Q',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        descricao: descricao
-      })
-    });
-    if (response.ok) {
+  const queryClient = useQueryClient();
+
+  const { isPending, error, data, isFetching } = useQuery({
+    queryKey: ["tarefas"],
+    queryFn: getTarefas,
+  });
+  const tarefas = data?.results ?? [];
+
+  const addMutation = useMutation({
+    mutationFn: addTarefas,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tarefas"] });
       setDescricao("");
-      handleCarregarClick();
-    } else {
-      const data = await response.json();
-      alert(`Erro ao tentar cadastrar tarefa: ${data.error}`);
-    }
-  }
+    },
+  });
+
+  const anyError = error || addMutation.error;
+
+  const [descricao, setDescricao] = useState("");
 
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        <h1>Exemplo de utilização de Back-End (Tarefas)</h1>
-        <button onClick={handleCarregarClick}>Carregar tarefas</button>
-        <hr />
-        <input 
+        <h1>
+          Exemplo de utilização de Back-End (Tarefas)
+          {(isFetching || isPending) && "..."}
+        </h1>
+        {!!anyError && (
+          <>
+            <h2>Erro: {anyError.message}</h2>
+            <hr />
+          </>
+        )}
+        <input
           placeholder="Digite a descrição da tarefa"
           value={descricao}
-          onChange={evt => setDescricao(evt.target.value)}
+          onChange={(evt) => setDescricao(evt.target.value)}
         />
-        <button onClick={handleNovaTarefaClick}>Adicionar</button>
+        <button onClick={() => addMutation.mutate(descricao)}>Adicionar</button>
         <hr />
         <ul>
-          {tarefas.map(tarefa => <li key={tarefa.objectId}>{tarefa.descricao}</li>)}
+          {tarefas.map((tarefa) => (
+            <li key={tarefa.objectId}>{tarefa.descricao}</li>
+          ))}
         </ul>
       </main>
     </div>
