@@ -1,9 +1,10 @@
 "use client";
 
-import { addTarefas, getTarefas } from "@/api";
+import { addTarefas, deleteTarefas, getTarefas, updateTarefas } from "@/api";
 import styles from "./page.module.css";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Tarefa from "@/components/Tarefa";
 
 export default function Home() {
   const queryClient = useQueryClient();
@@ -19,6 +20,20 @@ export default function Home() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tarefas"] });
       setDescricao("");
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: updateTarefas,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tarefas"] });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteTarefas,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tarefas"] });
     },
   });
 
@@ -48,7 +63,12 @@ export default function Home() {
         <hr />
         <ul>
           {tarefas.map((tarefa) => (
-            <li key={tarefa.objectId}>{tarefa.descricao}</li>
+            <Tarefa
+              key={tarefa.objectId}
+              tarefa={tarefa}
+              onUpdate={updateMutation.mutate}
+              onDelete={deleteMutation.mutate}
+            />
           ))}
         </ul>
       </main>

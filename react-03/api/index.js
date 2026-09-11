@@ -27,3 +27,19 @@ export async function addTarefas(descricao) {
     },
   );
 }
+
+export async function updateTarefas({ objectId, concluida }) {
+  return await instance.put(
+    `/classes/Tarefa/${objectId}`,
+    {
+      concluida: concluida,
+    },
+    {
+      headers: headerJson,
+    },
+  );
+}
+
+export async function deleteTarefas({ objectId }) {
+  return await instance.delete(`/classes/Tarefa/${objectId}`);
+}
