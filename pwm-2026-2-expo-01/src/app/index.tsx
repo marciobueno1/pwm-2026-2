@@ -1,3 +1,4 @@
+import { Link } from "expo-router";
 import { useState } from "react";
 import {
   Text,
@@ -9,92 +10,16 @@ import {
   Image,
   Pressable,
   ScrollView,
+  ActivityIndicator,
+  PixelRatio,
 } from "react-native";
 
 export default function Index() {
-  const [nome, onChangeNome] = useState("");
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Olá, Turma!</Text>
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.input}
-          onChangeText={onChangeNome}
-          value={nome}
-          placeholder="Digite seu nome"
-        />
-        <Button
-          title="Confirmar"
-          onPress={() => Alert.alert("Info", "Olá, " + nome)}
-        />
-      </View>
-      <Pressable onPress={() => Alert.alert("Info", "Olá, " + nome)}>
-        <Image source={require("@/assets/images/subscribe-youtube.jpg")} />
-      </Pressable>
-      <Text style={styles.title}>Olá, Turma!</Text>
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.input}
-          onChangeText={onChangeNome}
-          value={nome}
-          placeholder="Digite seu nome"
-        />
-        <Button
-          title="Confirmar"
-          onPress={() => Alert.alert("Info", "Olá, " + nome)}
-        />
-      </View>
-      <Pressable onPress={() => Alert.alert("Info", "Olá, " + nome)}>
-        <Image source={require("@/assets/images/subscribe-youtube.jpg")} />
-      </Pressable>
-      <Text style={styles.title}>Olá, Turma!</Text>
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.input}
-          onChangeText={onChangeNome}
-          value={nome}
-          placeholder="Digite seu nome"
-        />
-        <Button
-          title="Confirmar"
-          onPress={() => Alert.alert("Info", "Olá, " + nome)}
-        />
-      </View>
-      <Pressable onPress={() => Alert.alert("Info", "Olá, " + nome)}>
-        <Image source={require("@/assets/images/subscribe-youtube.jpg")} />
-      </Pressable>
-      <Text style={styles.title}>Olá, Turma!</Text>
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.input}
-          onChangeText={onChangeNome}
-          value={nome}
-          placeholder="Digite seu nome"
-        />
-        <Button
-          title="Confirmar"
-          onPress={() => Alert.alert("Info", "Olá, " + nome)}
-        />
-      </View>
-      <Pressable onPress={() => Alert.alert("Info", "Olá, " + nome)}>
-        <Image source={require("@/assets/images/subscribe-youtube.jpg")} />
-      </Pressable>
-      <Text style={styles.title}>Olá, Turma!</Text>
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.input}
-          onChangeText={onChangeNome}
-          value={nome}
-          placeholder="Digite seu nome"
-        />
-        <Button
-          title="Confirmar"
-          onPress={() => Alert.alert("Info", "Olá, " + nome)}
-        />
-      </View>
-      <Pressable onPress={() => Alert.alert("Info", "Olá, " + nome)}>
-        <Image source={require("@/assets/images/subscribe-youtube.jpg")} />
-      </Pressable>
+      <Link href="/scrollTest">Exemplo de ScrollView</Link>
+      <Link href="/listaTarefas">Lista de Tarefas</Link>
     </ScrollView>
   );
 }
@@ -104,6 +29,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "yellow",
+    marginTop: 100,
   },
   title: {
     fontSize: 40,
