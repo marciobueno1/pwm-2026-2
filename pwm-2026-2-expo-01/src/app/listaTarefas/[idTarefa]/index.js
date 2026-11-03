@@ -1,15 +1,20 @@
-"use client";
+import { StyleSheet, Text, View } from "react-native";
 
-import { use } from "react";
+import { useLocalSearchParams } from "expo-router";
 
-export default function PageTarefa({ params, searchParams }) {
-  const { idTarefa } = use(params);
-  const { filtro } = use(searchParams);
+export default function PageTarefa() {
+  const { idTarefa, filtro } = useLocalSearchParams();
   return (
-    <div>
-      <h1>
+    <View>
+      <Text style={styles.title}>
         Tarefa: {idTarefa} - filtro: {filtro}
-      </h1>
-    </div>
+      </Text>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  title: {
+    fontSize: 40,
+  },
+});
