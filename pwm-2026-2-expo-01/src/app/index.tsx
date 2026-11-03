@@ -1,18 +1,5 @@
 import { Link } from "expo-router";
-import { useState } from "react";
-import {
-  Text,
-  View,
-  StyleSheet,
-  TextInput,
-  Button,
-  Alert,
-  Image,
-  Pressable,
-  ScrollView,
-  ActivityIndicator,
-  PixelRatio,
-} from "react-native";
+import { Text, StyleSheet, ScrollView } from "react-native";
 
 export default function Index() {
   return (
@@ -20,6 +7,7 @@ export default function Index() {
       <Text style={styles.title}>Olá, Turma!</Text>
       <Link href="/scrollTest">Exemplo de ScrollView</Link>
       <Link href="/listaTarefas">Lista de Tarefas</Link>
+      <Link href="/auth">Autenticação</Link>
     </ScrollView>
   );
 }
