@@ -15,3 +15,13 @@ export const useTarefasStore = create(
     },
   ),
 );
+
+export const useAuthStore = create((set) => ({
+  user: null,
+  setUser: (userData) =>
+    set({
+      user: userData,
+    }),
+}));
+
+export const useUserStore = useAuthStore;
