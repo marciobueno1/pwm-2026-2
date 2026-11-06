@@ -12,11 +12,13 @@ import {
   ActivityIndicator,
   PixelRatio,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   const [nome, onChangeNome] = useState("");
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <SafeAreaView edges={["bottom", "left", "right"]} style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Olá, Turma!</Text>
       <ActivityIndicator size="large" />
       <View style={styles.inputView}>
@@ -102,14 +104,20 @@ export default function Index() {
         <Image source={require("@/assets/images/subscribe-youtube.jpg")} />
       </Pressable>
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "yellow",
+  },
   container: {
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "yellow",
+    paddingBottom: 20,
   },
   title: {
     fontSize: 40,

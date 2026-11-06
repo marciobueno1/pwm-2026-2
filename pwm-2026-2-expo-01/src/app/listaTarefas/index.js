@@ -2,16 +2,17 @@ import { addTarefas, deleteTarefas, getTarefas, updateTarefas } from "@/api";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Tarefa from "@/components/Tarefa";
-import { Link } from "expo-router";
 import { useTarefasStore } from "@/zustand";
 import {
   Button,
+  FlatList,
   StyleSheet,
   Switch,
   Text,
   TextInput,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ListaTarefas() {
   const queryClient = useQueryClient();
@@ -56,65 +57,144 @@ export default function ListaTarefas() {
   const [descricao, setDescricao] = useState("");
 
   return (
-    <View style={styles.page}>
-      <View style={styles.main}>
-        <Link href="/">Voltar</Link>
-        <Text style={styles.title}>
-          Exemplo de utilização de Back-End (Tarefas)
-          {(isFetching || isPending) && "..."}
-        </Text>
-        {!!anyError && (
-          <Text style={styles.subtitle}>Erro: {anyError.message}</Text>
-        )}
-        <TextInput
-          style={styles.input}
-          placeholder="Digite a descrição da tarefa"
-          value={descricao}
-          onChangeText={setDescricao}
-        />
-        <Button
-          onPress={() => addMutation.mutate(descricao)}
-          title="Adicionar"
-        />
-        <Switch
-          trackColor={{ false: "#767577", true: "#81b0ff" }}
-          thumbColor={filtrarConcluidas ? "#f5dd4b" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleFiltrarConcluidas}
-          value={filtrarConcluidas}
-        />
-        <Text>Só as não concluídas</Text>
-        <View style={styles.hr} />
-        {tarefas.map((tarefa) => (
+    <SafeAreaView edges={["bottom", "left", "right"]} style={styles.safeArea}>
+      {/* Seção Fixa no Topo */}
+      <View style={styles.fixedHeader}>
+        <View style={styles.header}>
+          <Text style={styles.title}>
+            Gerenciador de Tarefas
+            {(isFetching || isPending) && "..."}
+          </Text>
+          {!!anyError && (
+            <Text style={styles.errorText}>Erro: {anyError.message}</Text>
+          )}
+        </View>
+
+        <View style={styles.inputCard}>
+          <TextInput
+            style={styles.input}
+            placeholder="Digite a descrição da tarefa"
+            placeholderTextColor="#8e8e93"
+            value={descricao}
+            onChangeText={setDescricao}
+          />
+          <Button
+            onPress={() => {
+              if (descricao.trim()) {
+                addMutation.mutate(descricao.trim());
+              }
+            }}
+            title="Adicionar"
+            disabled={!descricao.trim() || addMutation.isPending}
+          />
+        </View>
+
+        <View style={styles.filterRow}>
+          <Text style={styles.filterText}>Exibir apenas não concluídas</Text>
+          <Switch
+            trackColor={{ false: "#767577", true: "#81b0ff" }}
+            thumbColor={filtrarConcluidas ? "#007AFF" : "#f4f3f4"}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={toggleFiltrarConcluidas}
+            value={filtrarConcluidas}
+          />
+        </View>
+      </View>
+
+      {/* Lista Otimizada com FlatList */}
+      <FlatList
+        data={tarefas}
+        keyExtractor={(item) => item.objectId}
+        contentContainerStyle={styles.listContainer}
+        refreshing={isFetching && !isPending}
+        onRefresh={() =>
+          queryClient.invalidateQueries({ queryKey: ["tarefas"] })
+        }
+        renderItem={({ item }) => (
           <Tarefa
-            key={tarefa.objectId}
-            tarefa={tarefa}
+            tarefa={item}
             onUpdate={updateMutation.mutate}
             onDelete={deleteMutation.mutate}
           />
-        ))}
-      </View>
-    </View>
+        )}
+        ListEmptyComponent={
+          !isFetching && !isPending ? (
+            <Text style={styles.emptyText}>Nenhuma tarefa encontrada.</Text>
+          ) : null
+        }
+      />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  page: {},
-  main: {},
-  title: {
-    fontSize: 40,
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#f2f2f7",
   },
-  subtitle: {
-    fontSize: 30,
+  fixedHeader: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 8,
+    backgroundColor: "#f2f2f7",
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: "#d1d1d6",
+  },
+  header: {
+    marginBottom: 12,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#1c1c1e",
+  },
+  errorText: {
+    fontSize: 14,
+    color: "#ff3b30",
+    marginTop: 4,
+  },
+  inputCard: {
+    backgroundColor: "#ffffff",
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#e5e5ea",
+    marginBottom: 10,
+    gap: 8,
   },
   input: {
-    height: 40,
-    margin: 12,
+    height: 44,
     borderWidth: 1,
-    padding: 10,
+    borderColor: "#c7c7cc",
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    backgroundColor: "#ffffff",
+    fontSize: 16,
   },
-  hr: {
-    height: 2,
-    backgroundColor: "black",
+  filterRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "#ffffff",
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#e5e5ea",
+  },
+  filterText: {
+    fontSize: 15,
+    color: "#3a3a3c",
+    fontWeight: "500",
+  },
+  listContainer: {
+    padding: 16,
+    paddingTop: 12,
+  },
+  emptyText: {
+    textAlign: "center",
+    color: "#8e8e93",
+    fontSize: 15,
+    marginTop: 40,
   },
 });
