@@ -24,6 +24,17 @@ export async function signingUp({ username, password, email }) {
 
 export async function loggingOut({ sessionToken }) {
   return await instance.post("/logout", {
-    "X-Parse-Session-Token": sessionToken,
+    headers: { "X-Parse-Session-Token": sessionToken },
   });
+}
+
+export async function loggingIn({ username, password }) {
+  console.log("enviando: ", username, password);
+  return await instance.post(
+    "/login",
+    { username: username, password: password },
+    {
+      headers: { ...headerJson, ...headerRevocableSession },
+    },
+  );
 }

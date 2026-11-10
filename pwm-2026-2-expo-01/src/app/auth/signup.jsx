@@ -6,7 +6,7 @@ import {
   StyleSheet,
   View,
   TextInput,
-  TouchableOpacity,
+  Pressable,
   ScrollView,
   Alert,
 } from "react-native";
@@ -25,9 +25,9 @@ export default function SignUpPage() {
 
   const mutation = useMutation({
     mutationFn: signingUp,
-    onSuccess: (data) => {
-      setAuthUser({ ...user, ...data.data });
-      console.log("Sucesso: ", { ...user, ...data.data });
+    onSuccess: (response) => {
+      setAuthUser({ ...user, ...response.data });
+      console.log("Sucesso: ", { ...user, ...response.data });
       router.back();
     },
     onError: (error) => {
@@ -48,6 +48,8 @@ export default function SignUpPage() {
   const handleChange = (field) => (value) => {
     setUser((prev) => ({ ...prev, [field]: value }));
   };
+
+  const isButtonDisabled = false;
 
   return (
     <SafeAreaView edges={["bottom", "left", "right"]} style={styles.safeArea}>
@@ -99,9 +101,20 @@ export default function SignUpPage() {
               />
             </View>
 
-            <TouchableOpacity style={styles.button} onPress={handleSignUp}>
-              <Text style={styles.buttonText}>Cadastrar</Text>
-            </TouchableOpacity>
+            <Pressable
+              style={({ pressed }) => [
+                styles.button,
+                isButtonDisabled && styles.buttonDisabled,
+                pressed && !isButtonDisabled && styles.buttonPressed,
+              ]}
+              onPress={handleSignUp}
+              disabled={isButtonDisabled}
+              android_ripple={{ color: "rgba(255, 255, 255, 0.2)" }}
+            >
+              <Text style={styles.buttonText}>
+                {mutation.isPending ? "Cadastrando..." : "Cadastrar"}
+              </Text>
+            </Pressable>
           </View>
         </View>
       </ScrollView>
@@ -162,6 +175,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     marginTop: 8,
+    overflow: "hidden",
+  },
+  buttonDisabled: {
+    opacity: 0.4,
+  },
+  buttonPressed: {
+    opacity: 0.8,
   },
   buttonText: {
     color: "#ffffff",

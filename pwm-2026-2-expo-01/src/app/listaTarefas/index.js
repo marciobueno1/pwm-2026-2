@@ -13,8 +13,10 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useUserStore } from "@/zustand";
 
 export default function ListaTarefas() {
+  const user = useUserStore((state) => state.user);
   const queryClient = useQueryClient();
 
   const { isPending, error, data, isFetching } = useQuery({
@@ -81,7 +83,10 @@ export default function ListaTarefas() {
           <Button
             onPress={() => {
               if (descricao.trim()) {
-                addMutation.mutate(descricao.trim());
+                addMutation.mutate({
+                  descricao: descricao.trim(),
+                  sessionToken: user?.sessionToken,
+                });
               }
             }}
             title="Adicionar"

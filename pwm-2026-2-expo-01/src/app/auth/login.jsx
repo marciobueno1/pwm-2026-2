@@ -1,15 +1,21 @@
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   Text,
   StyleSheet,
   View,
   TextInput,
-  TouchableOpacity,
+  Pressable,
   ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useMutation } from "@tanstack/react-query";
+import { loggingIn } from "@/api";
+import { useUserStore } from "@/zustand";
 
 export default function LogInPage() {
+  const router = useRouter();
+  const setAuthUser = useUserStore((state) => state.setUser);
   const [user, setUser] = useState({
     username: "",
     password: "",
@@ -19,9 +25,25 @@ export default function LogInPage() {
     setUser((prev) => ({ ...prev, [field]: value }));
   };
 
+  const mutation = useMutation({
+    mutationFn: loggingIn,
+    onSuccess: (response) => {
+      setAuthUser({ ...user, ...response.data });
+      console.log("Sucesso: ", { ...user, ...response.data });
+      router.back();
+    },
+    onError: (error) => {
+      console.log("Error: ", error);
+      console.log("Error message: ", error.message);
+    },
+  });
+
   const handleLogin = () => {
     console.log("Dados de login:", user);
+    mutation.mutate(user);
   };
+
+  const isButtonDisabled = !user.username.trim() || !user.password.trim();
 
   return (
     <SafeAreaView edges={["bottom", "left", "right"]} style={styles.safeArea}>
@@ -31,7 +53,9 @@ export default function LogInPage() {
       >
         <View style={styles.card}>
           <Text style={styles.title}>Entrar na sua conta</Text>
-          <Text style={styles.subtitle}>Digite suas credenciais para acessar.</Text>
+          <Text style={styles.subtitle}>
+            Digite suas credenciais para acessar.
+          </Text>
 
           <View style={styles.form}>
             <View style={styles.inputGroup}>
@@ -58,9 +82,18 @@ export default function LogInPage() {
               />
             </View>
 
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
+            <Pressable
+              style={({ pressed }) => [
+                styles.button,
+                isButtonDisabled && styles.buttonDisabled,
+                pressed && !isButtonDisabled && styles.buttonPressed,
+              ]}
+              onPress={handleLogin}
+              disabled={isButtonDisabled}
+              android_ripple={{ color: "rgba(255, 255, 255, 0.2)" }}
+            >
               <Text style={styles.buttonText}>Entrar</Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
       </ScrollView>
@@ -121,6 +154,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     marginTop: 8,
+    overflow: "hidden",
+  },
+  buttonDisabled: {
+    opacity: 0.4,
+  },
+  buttonPressed: {
+    opacity: 0.8,
   },
   buttonText: {
     color: "#ffffff",

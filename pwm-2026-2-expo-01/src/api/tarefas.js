@@ -16,26 +16,26 @@ export async function getTarefas() {
   return response.data;
 }
 
-export async function addTarefas(descricao) {
+export async function addTarefas({ descricao, sessionToken }) {
   return await instance.post(
     "/classes/Tarefa",
     {
       descricao: descricao,
     },
     {
-      headers: headerJson,
+      headers: { ...headerJson, "X-Parse-Session-Token": sessionToken },
     },
   );
 }
 
-export async function updateTarefas({ objectId, concluida }) {
+export async function updateTarefas({ objectId, concluida, sessionToken }) {
   return await instance.put(
     `/classes/Tarefa/${objectId}`,
     {
       concluida: concluida,
     },
     {
-      headers: headerJson,
+      headers: { ...headerJson, "X-Parse-Session-Token": sessionToken },
     },
   );
 }

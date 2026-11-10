@@ -1,7 +1,9 @@
 import { Button, View, Switch, StyleSheet, Text } from "react-native";
 import { Link } from "expo-router";
+import { useUserStore } from "@/zustand";
 
 export default function Tarefa({ tarefa, onUpdate, onDelete }) {
+  const user = useUserStore((state) => state.user);
   return (
     <View style={styles.container}>
       <Link
@@ -9,10 +11,7 @@ export default function Tarefa({ tarefa, onUpdate, onDelete }) {
         style={styles.link}
       >
         <Text
-          style={[
-            styles.text,
-            tarefa.concluida && styles.textCompleted,
-          ]}
+          style={[styles.text, tarefa.concluida && styles.textCompleted]}
           numberOfLines={2}
         >
           {tarefa.descricao}
@@ -24,7 +23,11 @@ export default function Tarefa({ tarefa, onUpdate, onDelete }) {
           thumbColor={tarefa.concluida ? "#007AFF" : "#f4f3f4"}
           ios_backgroundColor="#3e3e3e"
           onValueChange={() =>
-            onUpdate({ ...tarefa, concluida: !tarefa.concluida })
+            onUpdate({
+              ...tarefa,
+              concluida: !tarefa.concluida,
+              sessionToken: user?.sessionToken,
+            })
           }
           value={tarefa.concluida}
         />

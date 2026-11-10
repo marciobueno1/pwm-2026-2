@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useUserStore } from "@/zustand";
 import { useRouter } from "expo-router";
@@ -43,6 +43,8 @@ export default function LogOutPage() {
     );
   };
 
+  const isButtonDisabled = !user || mutation.isPending;
+
   return (
     <SafeAreaView edges={["bottom", "left", "right"]} style={styles.safeArea}>
       <View style={styles.container}>
@@ -52,13 +54,20 @@ export default function LogOutPage() {
             Clique no botão abaixo para encerrar a sessão da sua conta.
           </Text>
 
-          <TouchableOpacity
-            style={styles.button}
+          <Pressable
+            style={({ pressed }) => [
+              styles.button,
+              isButtonDisabled && styles.buttonDisabled,
+              pressed && !isButtonDisabled && styles.buttonPressed,
+            ]}
             onPress={handleLogout}
-            disabled={!user}
+            disabled={isButtonDisabled}
+            android_ripple={{ color: "rgba(255, 255, 255, 0.2)" }}
           >
-            <Text style={styles.buttonText}>Deslogar</Text>
-          </TouchableOpacity>
+            <Text style={styles.buttonText}>
+              {mutation.isPending ? "Saindo..." : "Deslogar"}
+            </Text>
+          </Pressable>
         </View>
       </View>
     </SafeAreaView>
@@ -96,6 +105,13 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 8,
     alignItems: "center",
+    overflow: "hidden",
+  },
+  buttonDisabled: {
+    opacity: 0.4,
+  },
+  buttonPressed: {
+    opacity: 0.8,
   },
   buttonText: {
     color: "#ffffff",
