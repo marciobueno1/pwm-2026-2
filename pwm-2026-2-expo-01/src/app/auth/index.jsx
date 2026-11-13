@@ -16,6 +16,11 @@ export default function AuthPage() {
           <Link href="/auth/signup" style={styles.linkButton}>
             <Text style={styles.linkText}>📝 Cadastrar (Sign Up)</Text>
           </Link>
+          <Link href="/auth/reset" style={styles.linkButton}>
+            <Text style={styles.linkText}>
+              🔄 Esqueci a minha senha (Password Reset)
+            </Text>
+          </Link>
           <Link href="/auth/logout" style={styles.linkButton}>
             <Text style={styles.linkText}>🚪 Sair (Log Out)</Text>
           </Link>

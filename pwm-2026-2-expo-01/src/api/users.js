@@ -29,12 +29,27 @@ export async function loggingOut({ sessionToken }) {
 }
 
 export async function loggingIn({ username, password }) {
-  console.log("enviando: ", username, password);
   return await instance.post(
     "/login",
     { username: username, password: password },
     {
       headers: { ...headerJson, ...headerRevocableSession },
+    },
+  );
+}
+// curl -X POST \
+// -H "X-Parse-Application-Id: t4wZSEfltZ4QtFBZX5LY9hyyx4I45uAbjsrwzCAi" \
+// -H "X-Parse-REST-API-Key: ZXx7xAlvFOyZith0HDnSpWdlHxnnATKsdgakYg4Q" \
+// -H "Content-Type: application/json" \
+// -d '{"email":"email@example.com"}' \
+// https://parseapi.back4app.com/requestPasswordReset
+
+export async function requestPasswordReset({ email }) {
+  return await instance.post(
+    "/requestPasswordReset",
+    { email: email },
+    {
+      headers: headerJson,
     },
   );
 }
